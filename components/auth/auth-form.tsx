@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -51,7 +51,7 @@ export function AuthForm({ mode }: { mode: FormMode }) {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<AnyValues>({
-    resolver: zodResolver(schemaByMode[mode]),
+    resolver: zodResolver(schemaByMode[mode] as never) as Resolver<AnyValues>,
     defaultValues:
       mode === "register"
         ? { fullName: "", email: "", password: "", confirmPassword: "" }

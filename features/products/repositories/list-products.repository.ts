@@ -9,7 +9,10 @@ export class ListProductsRepository {
 
     if (filters.search) {
       const searchPattern = `%${filters.search}%`;
-      conditions.push(or(ilike(products.name, searchPattern), ilike(categories.name, searchPattern)));
+      const searchCondition = or(ilike(products.name, searchPattern), ilike(categories.name, searchPattern));
+      if (searchCondition) {
+        conditions.push(searchCondition);
+      }
     }
 
     if (filters.categoryId) {

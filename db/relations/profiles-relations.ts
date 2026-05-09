@@ -1,10 +1,9 @@
 import { relations } from "drizzle-orm";
-import { addresses, auditLogs, carts, coupons, inventory, inventoryLogs, orders, sessions, users } from "../schema";
+import { addresses, auditLogs, carts, coupons, inventory, inventoryLogs, orders, users } from "../schema";
 
 // Domain note: "profiles" in product language maps to the `users` table in schema.
 export const profilesRelations = relations(users, ({ many }) => ({
   addresses: many(addresses),
-  sessions: many(sessions),
   carts: many(carts),
   orders: many(orders),
   inventoryUpdates: many(inventory),

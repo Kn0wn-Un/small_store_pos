@@ -3,6 +3,10 @@ import { z } from "zod";
 export const createOrderSchema = z.object({
   customerId: z.string().uuid(),
   source: z.enum(["pos", "ecommerce"]),
+  paymentProvider: z.enum(["cash", "upi", "card"]),
+  paymentMethod: z.enum(["cash", "upi", "card", "bank_transfer"]),
+  paymentStatus: z.enum(["pending", "paid", "failed", "refunded", "partially_refunded"]).default("paid"),
+  transactionId: z.string().max(150).optional(),
   subtotalAmount: z.string(),
   taxAmount: z.string().default("0"),
   discountAmount: z.string().default("0"),
@@ -13,6 +17,7 @@ export const createOrderSchema = z.object({
         productId: z.string().uuid(),
         quantity: z.number().int().positive(),
         unitPriceSnapshot: z.string(),
+        taxPercentageSnapshot: z.string().default("0"),
         lineSubtotal: z.string(),
       }),
     )

@@ -48,7 +48,7 @@ export class UpdateProductService {
     let normalizedName: string | undefined;
     if (parsed.data.name !== undefined) {
       const nameResult = validateProductService.normalizeName(parsed.data.name);
-      if (!nameResult.success) {
+      if (!nameResult.success || !nameResult.normalizedName) {
         return { success: false, message: "Invalid product name.", data: null, errors: nameResult.errors };
       }
       normalizedName = nameResult.normalizedName;
@@ -69,7 +69,7 @@ export class UpdateProductService {
 
     if (parsed.data.salePrice !== undefined) {
       const priceResult = validateProductService.normalizePrice(parsed.data.salePrice);
-      if (!priceResult.success) {
+      if (!priceResult.success || !priceResult.normalizedPrice) {
         return { success: false, message: "Invalid product price.", data: null, errors: priceResult.errors };
       }
     }

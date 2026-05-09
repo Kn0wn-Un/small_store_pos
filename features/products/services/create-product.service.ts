@@ -24,16 +24,18 @@ export class CreateProductService {
     }
 
     const nameResult = validateProductService.normalizeName(parsed.data.name);
-    if (!nameResult.success) {
+    if (!nameResult.success || !nameResult.normalizedName) {
       return { success: false, message: "Invalid product name.", data: null, errors: nameResult.errors };
     }
 
     const priceResult = validateProductService.normalizePrice(parsed.data.salePrice);
-    if (!priceResult.success) {
+    if (!priceResult.success || !priceResult.normalizedPrice) {
       return { success: false, message: "Invalid product price.", data: null, errors: priceResult.errors };
     }
+    const normalizedName = nameResult.normalizedName;
+    const normalizedPrice = priceResult.normalizedPrice;
 
-    const duplicate = await getProductRepository.findByNormalizedName(nameResult.normalizedName);
+    const duplicate = await getProductRepository.findByNormalizedName(normalizedName);
     if (duplicate) {
       return {
         success: false,
@@ -57,10 +59,10 @@ export class CreateProductService {
       const createdProductId = await createProductRepository.withTransaction(async (tx) => {
         const createdProduct = await createProductRepository.createProductTx(tx, {
           categoryId: parsed.data.categoryId,
-          name: nameResult.normalizedName,
+          name: normalizedName,
           description: parsed.data.description ?? null,
           imageUrl: parsed.data.imageUrl ?? null,
-          salePrice: formatPrice(priceResult.normalizedPrice),
+          salePrice: formatPrice(normalizedPrice),
           isActive: parsed.data.isActive ?? true,
         });
 
