@@ -1,3 +1,16 @@
-export default function ProductsPage() {
-  return <h1 className="text-2xl font-semibold">Storefront Products</h1>;
+import { Footer } from "@/components/storefront/footer";
+import { Navbar } from "@/components/storefront/navbar";
+import { ProductGrid } from "@/components/storefront/product-grid";
+import { getFeaturedProductsAction } from "@/features/storefront/actions/get-featured-products.action";
+
+export default async function ProductsPage() {
+  const productsResult = await getFeaturedProductsAction(24);
+
+  return (
+    <>
+      <Navbar />
+      <ProductGrid products={productsResult.data ?? []} />
+      <Footer />
+    </>
+  );
 }

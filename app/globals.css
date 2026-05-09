@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-cormorant);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -123,8 +123,83 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .heading-font {
+    font-family: var(--font-cormorant), serif;
+  }
+
+  .navy {
+    color: #2c3e57;
+  }
+
+  .navy-bg,
+  .luxury-nav {
+    background: #2c3e57;
+  }
+
+  .gold {
+    color: #b69224;
+  }
+
+  .gold-bg {
+    background: #b69224;
+  }
+
+  .subtext {
+    color: #1a1246;
+  }
+
+  .luxury-background {
+    background: #f8f5ef;
+  }
+
+  .hero-shape {
+    border-radius: 45% 55% 60% 40% / 45% 35% 65% 55%;
+  }
+
+  .luxury-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(44, 62, 87, 0.1) 0%, transparent 50%, rgba(182, 146, 36, 0.1) 100%);
+  }
+
+  .shadcn-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .shine-btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shine-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.8s ease;
+  }
+
+  .shine-btn:hover::before {
+    left: 120%;
+  }
+
+  .hover-glow:hover {
+    box-shadow:
+      0 10px 35px rgba(44, 62, 87, 0.15),
+      0 10px 20px rgba(182, 146, 36, 0.18);
   }
 }

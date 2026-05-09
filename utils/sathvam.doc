@@ -1,0 +1,959 @@
+Check the below code and go through it and correct it accordingly for the frontend of the product as backend is done and make sure the code that you will give me has the same ui code but make the changes that will go through with the backend and no errors pop up:   Sathvam Tailwind CSS Website Template
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SATHVAM - Purity At Its Best</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F8F5EF;
+      overflow-x: hidden;
+    }
+
+    .heading-font {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .navy {
+      color: #2C3E57;
+    }
+
+    .navy-bg {
+      background: #2C3E57;
+    }
+
+    .gold {
+      color: #B69224;
+    }
+
+    .gold-bg {
+      background: #B69224;
+    }
+
+    .subtext {
+      color: #1A1246;
+    }
+
+    .hero-shape {
+      border-radius: 45% 55% 60% 40% / 45% 35% 65% 55%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navy-bg text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+
+      <!-- LOGO -->
+      <div>
+        <h1 class="heading-font text-5xl tracking-wide leading-none text-white">
+          SATHVAM
+        </h1>
+
+        <div class="flex items-center gap-3 mt-1">
+          <div class="h-[2px] w-20 gold-bg"></div>
+
+          <div class="text-[#B69224] text-2xl">
+            ✿
+          </div>
+
+          <div class="h-[2px] w-20 gold-bg"></div>
+        </div>
+
+        <p class="text-xs tracking-[4px] mt-1 text-gray-200 uppercase">
+          Purity At Its Best
+        </p>
+      </div>
+
+      <!-- MENU -->
+      <nav class="hidden lg:flex items-center gap-10 text-sm font-medium">
+        <a href="#" class="hover:text-[#B69224] transition">Home</a>
+        <a href="#" class="hover:text-[#B69224] transition">Products</a>
+        <a href="#" class="hover:text-[#B69224] transition">Our Process</a>
+        <a href="#" class="hover:text-[#B69224] transition">About Us</a>
+        <a href="#" class="hover:text-[#B69224] transition">Contact</a>
+      </nav>
+
+      <!-- BUTTON -->
+      <button class="gold-bg hover:opacity-90 transition px-8 py-4 rounded-md font-semibold text-[#2C3E57]">
+        Shop Now
+      </button>
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden py-20 lg:py-28">
+
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- LEFT -->
+      <div>
+
+        <p class="uppercase tracking-[5px] text-sm gold mb-5 font-semibold">
+          Homemade • Organic • Traditional
+        </p>
+
+        <h1 class="heading-font text-6xl md:text-7xl leading-none font-bold navy mb-8">
+          Pure Oil.<br>
+          Honest Roots.
+        </h1>
+
+        <p class="text-xl leading-relaxed subtext max-w-xl mb-10">
+          Crafted in small batches using traditional wooden press methods.
+          Every bottle carries the warmth of home, the scent of heritage,
+          and the richness of real ingredients.
+        </p>
+
+        <!-- BUTTONS -->
+        <div class="flex flex-wrap gap-5 mb-16">
+
+          <button class="gold-bg hover:scale-105 transition text-white px-8 py-4 rounded-lg text-lg font-medium shadow-lg">
+            Explore Collection →
+          </button>
+
+          <button class="border-2 border-[#2C3E57] text-[#2C3E57] hover:bg-[#2C3E57] hover:text-white transition px-8 py-4 rounded-lg text-lg font-medium">
+            Our Story
+          </button>
+        </div>
+
+
+        <!-- ICON FEATURES -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+          <div>
+            <div class="text-5xl gold mb-3">🌿</div>
+            <h3 class="text-4xl font-bold navy">100%</h3>
+            <p class="subtext mt-2">Natural</p>
+          </div>
+
+          <div>
+            <div class="text-5xl gold mb-3">🪵</div>
+            <h3 class="text-4xl font-bold navy">Wood</h3>
+            <p class="subtext mt-2">Pressed</p>
+          </div>
+
+          <div>
+            <div class="text-5xl gold mb-3">🧪</div>
+            <h3 class="text-4xl font-bold navy">0%</h3>
+            <p class="subtext mt-2">Chemicals</p>
+          </div>
+
+          <div>
+            <div class="text-5xl gold mb-3">🌱</div>
+            <h3 class="text-4xl font-bold navy">Farm</h3>
+            <p class="subtext mt-2">Fresh</p>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- RIGHT -->
+      <div class="relative">
+
+        <div class="absolute inset-0 border-2 border-[#B69224] hero-shape"></div>
+
+        <div class="relative hero-shape overflow-hidden shadow-2xl bg-[#EFE6D7] p-8">
+
+          <img
+            src="https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?q=80&w=1200&auto=format&fit=crop"
+            class="w-full h-[700px] object-cover rounded-[40px]"
+          />
+        </div>
+
+        <!-- FLOAT CARD -->
+        <div class="absolute bottom-10 right-0 bg-white rounded-3xl shadow-2xl p-6 w-80 border border-gray-100">
+
+          <div class="flex items-center gap-5">
+
+            <div class="w-20 h-20 rounded-full bg-[#F8F1DB] flex items-center justify-center text-4xl gold">
+              ✿
+            </div>
+
+            <div>
+              <h3 class="text-3xl heading-font navy font-bold">
+                Cold Pressed
+              </h3>
+
+              <p class="subtext mt-2 leading-relaxed">
+                Rich nutrients preserved naturally
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PRODUCTS -->
+  <section class="py-24 bg-white">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+      <div class="text-center mb-16">
+
+        <p class="uppercase tracking-[5px] gold font-semibold mb-4">
+          Our Collection
+        </p>
+
+        <h2 class="heading-font text-6xl navy font-bold">
+          Best Selling Oils
+        </h2>
+      </div>
+
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+
+        <!-- CARD -->
+        <div class="bg-[#FCFAF7] rounded-[30px] overflow-hidden shadow-md hover:-translate-y-3 transition duration-500">
+
+          <img
+            src="https://images.unsplash.com/photo-1626201850129-a96f1f0d9f1e?q=80&w=1200&auto=format&fit=crop"
+            class="h-72 w-full object-cover"
+          />
+
+          <div class="p-8">
+
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="heading-font text-4xl navy font-bold">
+                Sesame Oil
+              </h3>
+
+              <span class="gold-bg text-white px-3 py-1 rounded-full text-xs">
+                Bestseller
+              </span>
+            </div>
+
+            <p class="subtext leading-relaxed mb-8">
+              Rich aroma and deeply nourishing texture using traditional extraction methods.
+            </p>
+
+            <div class="flex justify-between items-center">
+              <h4 class="text-4xl navy font-bold">₹499</h4>
+
+              <button class="gold-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- CARD -->
+        <div class="bg-[#FCFAF7] rounded-[30px] overflow-hidden shadow-md hover:-translate-y-3 transition duration-500">
+
+          <img
+            src="https://images.unsplash.com/photo-1587132137056-bfbf0166836e?q=80&w=1200&auto=format&fit=crop"
+            class="h-72 w-full object-cover"
+          />
+
+          <div class="p-8">
+
+            <h3 class="heading-font text-4xl navy font-bold mb-4">
+              Coconut Oil
+            </h3>
+
+            <p class="subtext leading-relaxed mb-8">
+              Pure homemade coconut oil with a naturally sweet fragrance and silky finish.
+            </p>
+
+            <div class="flex justify-between items-center">
+              <h4 class="text-4xl navy font-bold">₹599</h4>
+
+              <button class="gold-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- CARD -->
+        <div class="bg-[#FCFAF7] rounded-[30px] overflow-hidden shadow-md hover:-translate-y-3 transition duration-500">
+
+          <img
+            src="https://images.unsplash.com/photo-1603048719539-9ecb4f9f6c5f?q=80&w=1200&auto=format&fit=crop"
+            class="h-72 w-full object-cover"
+          />
+
+          <div class="p-8">
+
+            <h3 class="heading-font text-4xl navy font-bold mb-4">
+              Groundnut Oil
+            </h3>
+
+            <p class="subtext leading-relaxed mb-8">
+              Slow crafted for authentic taste and everyday healthy cooking.
+            </p>
+
+            <div class="flex justify-between items-center">
+              <h4 class="text-4xl navy font-bold">₹449</h4>
+
+              <button class="gold-bg text-white px-6 py-3 rounded-lg hover:opacity-90 transition">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PROCESS -->
+  <section class="py-24 bg-[#F8F5EF]">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+      <div class="text-center mb-20">
+
+        <p class="uppercase tracking-[5px] gold font-semibold mb-4">
+          Our Process
+        </p>
+
+        <h2 class="heading-font text-6xl navy font-bold">
+          Crafted The Traditional Way
+        </h2>
+      </div>
+
+
+      <div class="grid md:grid-cols-4 gap-10 text-center">
+
+        <div>
+          <div class="w-28 h-28 border-2 border-[#B69224] rounded-full flex items-center justify-center text-5xl mx-auto mb-6 gold">
+            🌱
+          </div>
+
+          <h3 class="navy text-2xl font-bold mb-3">
+            Farm Sourcing
+          </h3>
+
+          <p class="subtext leading-relaxed">
+            Carefully selected natural seeds from trusted farms.
+          </p>
+        </div>
+
+
+        <div>
+          <div class="w-28 h-28 border-2 border-[#B69224] rounded-full flex items-center justify-center text-5xl mx-auto mb-6 gold">
+            🪵
+          </div>
+
+          <h3 class="navy text-2xl font-bold mb-3">
+            Wood Pressed
+          </h3>
+
+          <p class="subtext leading-relaxed">
+            Traditional slow extraction preserving nutrients.
+          </p>
+        </div>
+
+
+        <div>
+          <div class="w-28 h-28 border-2 border-[#B69224] rounded-full flex items-center justify-center text-5xl mx-auto mb-6 gold">
+            🫙
+          </div>
+
+          <h3 class="navy text-2xl font-bold mb-3">
+            Filtered Naturally
+          </h3>
+
+          <p class="subtext leading-relaxed">
+            No industrial refining or chemical processing.
+          </p>
+        </div>
+
+
+        <div>
+          <div class="w-28 h-28 border-2 border-[#B69224] rounded-full flex items-center justify-center text-5xl mx-auto mb-6 gold">
+            🚚
+          </div>
+
+          <h3 class="navy text-2xl font-bold mb-3">
+            Delivered Fresh
+          </h3>
+
+          <p class="subtext leading-relaxed">
+            Packed in small batches and shipped quickly.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SUBSCRIPTION CTA -->
+  <section class="pb-24 px-6">
+
+    <div class="max-w-7xl mx-auto navy-bg rounded-[40px] p-14 relative overflow-hidden shadow-2xl">
+
+      <div class="absolute -right-10 -bottom-10 text-[250px] opacity-10 text-[#B69224]">
+        ✿
+      </div>
+
+      <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-10">
+
+        <div>
+          <p class="uppercase tracking-[5px] text-[#B69224] font-semibold mb-5">
+            Monthly Subscription
+          </p>
+
+          <h2 class="heading-font text-5xl text-white font-bold mb-6">
+            Never Run Out Of Pure Oil Again
+          </h2>
+
+          <p class="text-gray-300 text-lg max-w-2xl leading-relaxed">
+            Subscribe for monthly doorstep delivery and enjoy healthy cooking without compromise.
+          </p>
+        </div>
+
+
+        <button class="gold-bg hover:scale-105 transition text-white px-10 py-5 rounded-xl text-xl font-semibold shadow-lg whitespace-nowrap">
+          Start Subscription →
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="navy-bg text-white py-20">
+
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-16">
+
+      <div>
+
+        <h2 class="heading-font text-5xl text-white mb-4">
+          SATHVAM
+        </h2>
+
+        <p class="text-gray-300 leading-relaxed mb-8">
+          Traditional oils crafted with honesty, purity, and heritage.
+        </p>
+
+        <div class="flex gap-4 text-2xl">
+          <div class="w-12 h-12 rounded-full border border-gray-400 flex items-center justify-center hover:border-[#B69224] transition cursor-pointer">
+            f
+          </div>
+
+          <div class="w-12 h-12 rounded-full border border-gray-400 flex items-center justify-center hover:border-[#B69224] transition cursor-pointer">
+            ◎
+          </div>
+
+          <div class="w-12 h-12 rounded-full border border-gray-400 flex items-center justify-center hover:border-[#B69224] transition cursor-pointer">
+            ◉
+          </div>
+        </div>
+      </div>
+
+
+      <div>
+        <h3 class="text-2xl font-semibold mb-6 text-[#B69224]">
+          Company
+        </h3>
+
+        <ul class="space-y-4 text-gray-300">
+          <li>About Us</li>
+          <li>Our Story</li>
+          <li>Careers</li>
+          <li>Blog</li>
+        </ul>
+      </div>
+
+
+      <div>
+        <h3 class="text-2xl font-semibold mb-6 text-[#B69224]">
+          Products
+        </h3>
+
+        <ul class="space-y-4 text-gray-300">
+          <li>Sesame Oil</li>
+          <li>Coconut Oil</li>
+          <li>Groundnut Oil</li>
+          <li>All Products</li>
+        </ul>
+      </div>
+
+
+      <div>
+        <h3 class="text-2xl font-semibold mb-6 text-[#B69224]">
+          Contact
+        </h3>
+
+        <ul class="space-y-4 text-gray-300 leading-relaxed">
+          <li>Bangalore, India</li>
+          <li>hello@sathvam.com</li>
+          <li>+91 9876543210</li>
+        </ul>
+      </div>
+
+    </div>
+
+
+    <div class="border-t border-white/10 mt-16 pt-8 text-center text-gray-400 text-sm">
+      ©️ 2026 Sathvam. All rights reserved.
+    </div>
+
+  </footer>
+
+</body>
+</html>
+
+Main Brand Colors Used
+
+Purpose	Hex
+
+Primary Text	#2C3E57
+Highlight Gold	#B69224
+Subtext	#1A1246
+Background	#F8F5EF
+Navbar/Footer	#2C3E57
+
+
+Included Premium Features
+
+The following upgrades are now planned for the template:
+
+GSAP animations
+
+Floating oil particles animation
+
+WhatsApp floating order button
+
+Razorpay integration ready
+
+Luxury hover transitions
+
+Next.js conversion ready structure
+
+
+
+---
+
+Additional Enhancement Code
+
+Add this before the closing </body> tag.
+
+<!-- WHATSAPP FLOAT BUTTON -->
+<a
+  href="https://wa.me/919876543210"
+  target="_blank"
+  class="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-[#25D366] flex items-center justify-center shadow-2xl hover:scale-110 transition duration-300"
+>
+  <span class="text-white text-3xl">✆</span>
+</a>
+
+
+<!-- FLOATING PARTICLES -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+
+  <div class="absolute top-20 left-10 w-6 h-6 rounded-full bg-[#B69224]/20 animate-bounce"></div>
+
+  <div class="absolute top-1/3 right-20 w-10 h-10 rounded-full bg-[#B69224]/10 animate-pulse"></div>
+
+  <div class="absolute bottom-20 left-1/4 w-8 h-8 rounded-full bg-[#2C3E57]/10 animate-ping"></div>
+
+</div>
+
+
+<!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- RAZORPAY -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- SHADCN STYLE EFFECTS -->
+  <style>
+
+    .shadcn-card {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .shine-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shine-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.3),
+        transparent
+      );
+      transition: all .8s ease;
+    }
+
+    .shine-btn:hover::before {
+      left: 120%;
+    }
+
+    .hover-glow:hover {
+      box-shadow:
+      0 10px 35px rgba(44,62,87,0.15),
+      0 10px 20px rgba(182,146,36,0.18);
+    }
+
+  </style>
+
+  <script>
+
+    // GSAP ANIMATIONS
+
+    gsap.from("header", {
+      y: -80,
+      opacity: 0,
+      duration: 1
+    });
+
+    gsap.from("h1", {
+      x: -80,
+      opacity: 0,
+      duration: 1.2
+    });
+
+    gsap.from(".hero-shape", {
+      scale: .8,
+      opacity: 0,
+      duration: 1.4
+    });
+
+    gsap.from(".card-hover", {
+      y: 50,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 1
+    });
+
+
+    // FLOATING PARTICLES
+
+    function createParticle() {
+
+      const particle = document.createElement('div');
+
+      particle.classList.add('particle');
+
+      particle.style.position = 'fixed';
+      particle.style.width = Math.random() * 8 + 'px';
+      particle.style.height = particle.style.width;
+      particle.style.background = 'rgba(182,146,36,0.15)';
+      particle.style.borderRadius = '50%';
+      particle.style.left = Math.random() * window.innerWidth + 'px';
+      particle.style.top = window.innerHeight + 'px';
+      particle.style.pointerEvents = 'none';
+      particle.style.zIndex = '0';
+
+      document.body.appendChild(particle);
+
+      gsap.to(particle, {
+        y: -window.innerHeight - 200,
+        x: Math.random() * 200 - 100,
+        opacity: 0,
+        duration: Math.random() * 10 + 8,
+        ease: 'none',
+        onComplete: () => particle.remove()
+      });
+    }
+
+    setInterval(createParticle, 800);
+
+
+    // RAZORPAY PAYMENT
+
+    function payNow(productName, amount) {
+
+      const options = {
+
+        key: 'YOUR_RAZORPAY_KEY',
+
+        amount: amount * 100,
+
+        currency: 'INR',
+
+        name: 'SATHVAM',
+
+        description: productName,
+
+        image: 'https://your-logo-url.com/logo.png',
+
+        handler: function(response) {
+
+          alert(
+            'Payment Successful! Payment ID: ' +
+            response.razorpay_payment_id
+          );
+        },
+
+        theme: {
+          color: '#2C3E57'
+        }
+      };
+
+      const rzp = new Razorpay(options);
+
+      rzp.open();
+    }
+
+
+    // BUTTON CONNECT
+
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+
+      btn.addEventListener('click', () => {
+
+        const product = btn.dataset.product;
+
+        const amount = btn.dataset.amount;
+
+        payNow(product, amount);
+      });
+    });
+
+  </script>
+
+<script>
+
+  gsap.from("header", {
+    y: -80,
+    opacity: 0,
+    duration: 1
+  });
+
+  gsap.from("h1", {
+    x: -100,
+    opacity: 0,
+    duration: 1.2
+  });
+
+  gsap.from(".hero-shape", {
+    scale: 0.8,
+    opacity: 0,
+    duration: 1.5
+  });
+
+  gsap.from(".grid > div", {
+    opacity: 0,
+    y: 40,
+    stagger: 0.15,
+    duration: 1
+  });
+
+</script>
+
+
+---
+
+Razorpay Integration Example
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+function payNow() {
+
+  const options = {
+    key: "YOUR_RAZORPAY_KEY",
+    amount: 49900,
+    currency: "INR",
+    name: "SATHVAM",
+    description: "Purchase Oil",
+
+    handler: function(response) {
+      alert("Payment Successful: " + response.razorpay_payment_id);
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+</script>
+
+
+---
+
+ShadCN UI Enhancement
+
+To give the website a richer premium feel, add glassmorphism cards, luxury shadows, animated buttons, and elegant UI primitives using ShadCN UI.
+
+
+---
+
+Install ShadCN UI (Next.js)
+
+npx shadcn-ui@latest init
+
+Install components:
+
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add dialog
+npx shadcn-ui@latest add sheet
+npx shadcn-ui@latest add badge
+
+
+---
+
+Premium Shadow Utilities
+
+Add this inside your tailwind.config.js
+
+module.exports = {
+  theme: {
+    extend: {
+      boxShadow: {
+        luxury: '0 20px 60px rgba(44,62,87,0.18)',
+        gold: '0 10px 40px rgba(182,146,36,0.35)',
+        glass: '0 8px 32px rgba(31,38,135,0.12)',
+      },
+
+      backgroundImage: {
+        luxuryGradient:
+          'linear-gradient(135deg, #2C3E57 0%, #1A1246 100%)',
+      },
+
+      backdropBlur: {
+        xs: '2px',
+      },
+    },
+  },
+};
+
+
+---
+
+Glassmorphism Card Example
+
+<div class="backdrop-blur-xl bg-white/10 border border-white/20 shadow-glass rounded-[30px] p-8">
+  <h3 class="text-3xl text-white heading-font mb-4">
+    Premium Cold Pressed Oils
+  </h3>
+
+  <p class="text-white/80 leading-relaxed">
+    Crafted slowly using traditional extraction techniques.
+  </p>
+</div>
+
+
+---
+
+Luxury Shader Overlay
+
+Add this overlay inside hero sections:
+
+<div class="absolute inset-0 bg-gradient-to-br from-[#2C3E57]/10 via-transparent to-[#B69224]/10 pointer-events-none"></div>
+
+
+---
+
+Premium Hover Shader Effect
+
+<div class="group relative overflow-hidden rounded-[30px]">
+
+  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition duration-1000"></div>
+
+  <img
+    src="image.jpg"
+    class="group-hover:scale-105 transition duration-700"
+  />
+</div>
+
+
+---
+
+Luxury Button Style
+
+<button class="relative overflow-hidden gold-bg px-8 py-4 rounded-xl text-white font-semibold shadow-gold group">
+
+  <span class="relative z-10">
+    Shop Collection
+  </span>
+
+  <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-500"></div>
+
+</button>
+
+
+---
+
+Recommended Stack
+
+Layer	Technology
+
+Frontend	Next.js + Tailwind CSS
+Animations	GSAP
+Payments	Razorpay
+Database	Supabase
+Hosting	Vercel
+CMS	Sanity / Strapi
+Orders	Firebase / Supabase
+
+
+
+---
+
+Brand Feel
+
+SATHVAM should feel:
+
+luxurious
+
+calm
+
+rooted in tradition
+
+premium but honest
+
+Ayurvedic and timeless
+
+modern Indian heritage
+
+
+The visual direction now matches premium organic brands rather than local grocery ecommerce.
+
+Added:
+
+Full Razorpay checkout integration
+
+Floating luxury particles animation
+
+ShadCN-inspired glassmorphism effects
+
+Shine hover button shaders
+
+Premium glow hover effects
+
+Dynamic payment button handlers
+
+GSAP motion animations
+
+Enhanced luxury interaction system
+
+
+The template is now structured like a production-ready premium D2C brand landing page.
