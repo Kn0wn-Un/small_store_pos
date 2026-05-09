@@ -1,0 +1,7 @@
+export const PRODUCT_NAME_MIN_LENGTH = 2;
+export const PRODUCT_NAME_MAX_LENGTH = 180;
+export const PRODUCT_DESCRIPTION_MAX_LENGTH = 1000;
+export const PRODUCT_DECIMAL_PRECISION_REGEX = /^\d+(?:\.\d{1,2})?$/;
+export const PRODUCT_DEFAULT_PAGE = 1;
+export const PRODUCT_DEFAULT_PAGE_SIZE = 20;
+export const PRODUCT_MAX_PAGE_SIZE = 100;

@@ -40,7 +40,6 @@ export const products = pgTable(
       onUpdate: "cascade",
     }),
     name: varchar("name", { length: 180 }).notNull(),
-    slug: varchar("slug", { length: 220 }).notNull(),
     description: text("description"),
     imageUrl: text("image_url"),
     salePrice: numeric("sale_price", { precision: 12, scale: 2 }).notNull(),
@@ -50,7 +49,6 @@ export const products = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
-    uniqueIndex("products_slug_unique_idx").on(table.slug),
     index("products_category_idx").on(table.categoryId),
     index("products_active_idx").on(table.isActive),
     index("products_name_idx").on(table.name),
