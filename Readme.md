@@ -1,341 +1,36 @@
-# Unified Commerce System
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A modern full-stack commerce platform that combines:
+## Getting Started
 
-* 🧾 POS (Point of Sale) System
-* 🛒 E-commerce Storefront
-* 📦 Inventory Management
-* 📊 Analytics Dashboard
-* 👨‍💼 Admin Control Panel
-
-Built using:
-
-* Next.js
-* TypeScript
-* Supabase
-* Tailwind CSS
-* shadcn/ui
-* Vercel
-
----
-
-# 🚀 Features
-
-## POS System
-
-* Fast billing interface
-* Barcode/product search
-* Cart management
-* Invoice generation
-* Payment handling
-* Real-time inventory updates
-
----
-
-## E-commerce Storefront
-
-* Product catalog
-* Product detail pages
-* Shopping cart
-* Checkout flow
-* Order tracking
-* Shared inventory with POS
-
----
-
-## Admin Dashboard
-
-* Product management
-* Inventory management
-* Sales monitoring
-* Order management
-* Business analytics
-* Low stock alerts
-
----
-
-## Shared Systems
-
-* Unified product database
-* Shared inventory source of truth
-* Centralized order management
-* Sales analytics
-* Invoice generation
-* Role-based authentication
-
----
-
-# 🏗️ Tech Stack
-
-| Layer          | Technology                          |
-| -------------- | ----------------------------------- |
-| Frontend       | Next.js App Router                  |
-| Language       | TypeScript                          |
-| Styling        | Tailwind CSS                        |
-| UI Components  | shadcn/ui                           |
-| Backend        | Next.js Server Actions / API Routes |
-| Database       | Supabase PostgreSQL                 |
-| Authentication | Supabase Auth                       |
-| Storage        | Supabase Storage                    |
-| Deployment     | Vercel                              |
-
----
-
-# 📁 Project Structure
-
-```txt
-app/
-components/
-features/
-lib/
-services/
-repositories/
-hooks/
-store/
-types/
-schemas/
-constants/
-middleware/
-providers/
-utils/
-styles/
-supabase/
-tests/
-```
-
----
-
-# 🧩 Architecture
-
-## Core Domains
-
-### POS
-
-Handles:
-
-* Billing
-* Cart
-* Payments
-* Invoice generation
-
-### Ecommerce
-
-Handles:
-
-* Product browsing
-* Checkout
-* Orders
-* Customer experience
-
-### Admin
-
-Handles:
-
-* Analytics
-* Inventory
-* Product management
-* Monitoring
-
-### Shared/Core
-
-Handles:
-
-* Auth
-* Database access
-* Validation
-* Shared UI
-* Utilities
-
----
-
-# 🔐 Authentication & Authorization
-
-Roles supported:
-
-* Admin
-* Cashier
-* Customer
-
-Features:
-
-* Protected routes
-* Role-based middleware
-* Session management
-* Secure APIs
-
----
-
-# 📦 Inventory Rules
-
-* Single source of truth
-* Shared between POS and ecommerce
-* Auto deduction on order/payment
-* Real-time synchronization
-
----
-
-# 💳 Payment Flow
-
-```txt
-Cart → Checkout → Payment → Order Created → Inventory Updated
-```
-
----
-
-# 🧾 POS Flow
-
-```txt
-Product Search → Cart → Payment → Invoice → Inventory Update
-```
-
----
-
-# 📊 Analytics
-
-Includes:
-
-* Daily revenue
-* Monthly trends
-* Top-selling products
-* POS vs online sales
-* Inventory insights
-
----
-
-# ⚙️ Environment Variables
-
-Create:
-
-```bash
-.env.local
-```
-
-Example:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-
-NEXT_PUBLIC_APP_URL=
-
-PAYMENT_SECRET_KEY=
-PAYMENT_WEBHOOK_SECRET=
-```
-
----
-
-# 🛠️ Development Setup
-
-## Install dependencies
-
-```bash
-npm install
-```
-
----
-
-## Run development server
+First, run the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Run linting
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-```bash
-npm run lint
-```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
----
+## Learn More
 
-## Build production app
+To learn more about Next.js, take a look at the following resources:
 
-```bash
-npm run build
-```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
----
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-# 🗄️ Database
+## Deploy on Vercel
 
-Main tables:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-* users
-* products
-* categories
-* inventory
-* orders
-* order_items
-* payments
-* invoices
-* sales_logs
-
----
-
-# 📈 MVP Scope
-
-## Included
-
-* Authentication
-* POS billing
-* Product management
-* Inventory management
-* Ecommerce storefront
-* Checkout system
-* Order management
-* Invoice generation
-* Analytics dashboard
-
----
-
-## Excluded
-
-* Multi-store support
-* Native mobile apps
-* AI forecasting
-* Offline POS mode
-* Advanced accounting
-
----
-
-# 🚀 Deployment
-
-Hosted on:
-
-* Vercel
-* Supabase
-
----
-
-# 📌 Future Enhancements
-
-## Phase 2
-
-* Loyalty system
-* Coupons
-* Advanced analytics
-
-## Phase 3
-
-* Multi-branch support
-* Delivery tracking
-* Real-time sync improvements
-
----
-
-# 🧪 Testing
-
-Planned:
-
-* Unit testing
-* Integration testing
-* E2E testing
-
-Tools:
-
-* Vitest
-* Playwright
-* React Testing Library
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

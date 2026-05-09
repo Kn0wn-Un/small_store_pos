@@ -1,142 +1,41 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# =========================
-# Dependencies
-# =========================
-node_modules/
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# =========================
-# Next.js
-# =========================
-.next/
-out/
-build/
-dist/
+# testing
+/coverage
 
-# =========================
-# Production
-# =========================
-*.local
-*.log
+# next.js
+/.next/
+/out/
 
-# =========================
-# Environment Variables
-# =========================
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# production
+/build
 
-# Never commit secrets
-!.env.example
+# misc
+.DS_Store
+*.pem
 
-# =========================
-# Vercel
-# =========================
-.vercel/
-
-# =========================
-# TypeScript
-# =========================
-*.tsbuildinfo
-next-env.d.ts
-
-# =========================
-# Testing
-# =========================
-coverage/
-playwright-report/
-test-results/
-.vitest/
-
-# =========================
-# Logs
-# =========================
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+.pnpm-debug.log*
 
-# =========================
-# OS Files
-# =========================
-.DS_Store
-Thumbs.db
+# env files (can opt-in for committing if needed)
+.env*
 
-# =========================
-# IDE / Editor
-# =========================
-.vscode/
-.idea/
+# vercel
+.vercel
 
-# Optional:
-# keep workspace settings if needed
-!.vscode/extensions.json
-!.vscode/settings.json
-
-# =========================
-# Supabase
-# =========================
-.supabase/
-supabase/.temp/
-supabase/.branches/
-
-# =========================
-# Local Databases
-# =========================
-*.sqlite
-*.sqlite3
-
-# =========================
-# Cache
-# =========================
-.cache/
-.tmp/
-.temp/
-
-# =========================
-# Generated Files
-# =========================
-*.pem
-*.key
-*.crt
-
-# =========================
-# Uploads / Generated Assets
-# =========================
-uploads/
-public/uploads/
-
-# =========================
-# Storybook
-# =========================
-storybook-static/
-
-# =========================
-# Misc
-# =========================
-*.swp
-*.swo
-*~
-
-# =========================
-# Turborepo (optional)
-# =========================
-.turbo/
-
-# =========================
-# ESLint Cache
-# =========================
-.eslintcache
-
-# =========================
-# Package Managers
-# =========================
-.pnpm-store/
-
-# =========================
-# Keep Empty Folders
-# =========================
-!.gitkeep
-
-
+# typescript
+*.tsbuildinfo
+next-env.d.ts
