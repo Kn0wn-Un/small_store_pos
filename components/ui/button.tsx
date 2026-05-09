@@ -1,3 +1,20 @@
+import * as React from "react";
+import { cn } from "@/lib/utils";
+
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+export function Button({ className, type = "button", ...props }: ButtonProps) {
+  return (
+    <button
+      type={type}
+      className={cn(
+        "inline-flex h-10 items-center justify-center rounded-md bg-black px-4 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
