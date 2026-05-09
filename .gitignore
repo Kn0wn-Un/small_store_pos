@@ -1,0 +1,142 @@
+
+# =========================
+# Dependencies
+# =========================
+node_modules/
+
+# =========================
+# Next.js
+# =========================
+.next/
+out/
+build/
+dist/
+
+# =========================
+# Production
+# =========================
+*.local
+*.log
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Never commit secrets
+!.env.example
+
+# =========================
+# Vercel
+# =========================
+.vercel/
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
+next-env.d.ts
+
+# =========================
+# Testing
+# =========================
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# =========================
+# Logs
+# =========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# Optional:
+# keep workspace settings if needed
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# =========================
+# Supabase
+# =========================
+.supabase/
+supabase/.temp/
+supabase/.branches/
+
+# =========================
+# Local Databases
+# =========================
+*.sqlite
+*.sqlite3
+
+# =========================
+# Cache
+# =========================
+.cache/
+.tmp/
+.temp/
+
+# =========================
+# Generated Files
+# =========================
+*.pem
+*.key
+*.crt
+
+# =========================
+# Uploads / Generated Assets
+# =========================
+uploads/
+public/uploads/
+
+# =========================
+# Storybook
+# =========================
+storybook-static/
+
+# =========================
+# Misc
+# =========================
+*.swp
+*.swo
+*~
+
+# =========================
+# Turborepo (optional)
+# =========================
+.turbo/
+
+# =========================
+# ESLint Cache
+# =========================
+.eslintcache
+
+# =========================
+# Package Managers
+# =========================
+.pnpm-store/
+
+# =========================
+# Keep Empty Folders
+# =========================
+!.gitkeep
+
+
