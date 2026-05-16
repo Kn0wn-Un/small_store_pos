@@ -46,7 +46,12 @@ type AnyValues = z.infer<typeof loginSchema> &
   Partial<z.infer<typeof forgotPasswordSchema>> &
   Partial<z.infer<typeof resetPasswordSchema>>;
 
-export function AuthForm({ mode }: { mode: FormMode }) {
+type AuthFormProps = {
+  mode: FormMode;
+  redirectTo?: string;
+};
+
+export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -69,6 +74,10 @@ export function AuthForm({ mode }: { mode: FormMode }) {
         if (value !== undefined && value !== null) formData.append(key, String(value));
       });
 
+      if (mode === "login" && redirectTo) {
+        formData.set("redirectTo", redirectTo);
+      }
+
       const action =
         mode === "login"
           ? loginAction
@@ -85,7 +94,12 @@ export function AuthForm({ mode }: { mode: FormMode }) {
       }
 
       toast.success(result.message);
-      if (result.redirectTo) router.push(result.redirectTo);
+
+      // Login/reset-password use server `redirect()`; other modes navigate on the client.
+      if (mode !== "login" && mode !== "reset-password" && result.redirectTo) {
+        router.refresh();
+        router.push(result.redirectTo);
+      }
     });
   });
 

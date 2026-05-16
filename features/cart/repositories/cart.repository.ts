@@ -1,46 +1,75 @@
-import { and, eq } from "drizzle-orm";
-import { db } from "@/db";
-import { cartItems, carts, products } from "@/db/schema";
+import { createClient } from "@/supabase/server";
+import { mapCartItemRow, mapCartRow, toMoneyNumber } from "@/lib/supabase/mappers";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
 
 export class CartRepository {
   async createCart(payload: { userId?: string; source: "pos" | "ecommerce" }) {
-    const [created] = await db
-      .insert(carts)
-      .values({
-        userId: payload.userId,
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("carts")
+      .insert({
+        user_id: payload.userId ?? null,
         source: payload.source,
       })
-      .returning();
-    return created;
+      .select("*")
+      .single();
+
+    throwOnSupabaseError(error);
+    if (!data) {
+      throw new Error("Cart creation failed.");
+    }
+    return mapCartRow(data);
   }
 
   async getCartById(cartId: string) {
-    const [row] = await db.select().from(carts).where(eq(carts.id, cartId)).limit(1);
-    return row ?? null;
+    const supabase = await createClient();
+    const { data, error } = await supabase.from("carts").select("*").eq("id", cartId).maybeSingle();
+    throwOnSupabaseError(error);
+    return data ? mapCartRow(data) : null;
   }
 
   async getCartItems(cartId: string) {
-    return db
-      .select({
-        cartItemId: cartItems.id,
-        productId: cartItems.productId,
-        productName: products.name,
-        quantity: cartItems.quantity,
-        unitPrice: cartItems.unitPrice,
-        taxPercentage: cartItems.taxPercentage,
-      })
-      .from(cartItems)
-      .leftJoin(products, eq(products.id, cartItems.productId))
-      .where(eq(cartItems.cartId, cartId));
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("cart_items")
+      .select(
+        `
+        id,
+        product_id,
+        quantity,
+        unit_price,
+        tax_percentage,
+        products ( name )
+      `,
+      )
+      .eq("cart_id", cartId);
+
+    throwOnSupabaseError(error);
+
+    return (data ?? []).map((row) => {
+      const product = Array.isArray(row.products) ? row.products[0] : row.products;
+      return {
+        cartItemId: row.id,
+        productId: row.product_id,
+        productName: product?.name ?? "",
+        quantity: row.quantity,
+        unitPrice: String(row.unit_price),
+        taxPercentage: String(row.tax_percentage),
+      };
+    });
   }
 
   async getCartItemByProduct(cartId: string, productId: string) {
-    const [row] = await db
-      .select()
-      .from(cartItems)
-      .where(and(eq(cartItems.cartId, cartId), eq(cartItems.productId, productId)))
-      .limit(1);
-    return row ?? null;
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("cart_items")
+      .select("*")
+      .eq("cart_id", cartId)
+      .eq("product_id", productId)
+      .maybeSingle();
+
+    throwOnSupabaseError(error);
+    return data ? mapCartItemRow(data) : null;
   }
 
   async addCartItem(payload: {
@@ -50,35 +79,51 @@ export class CartRepository {
     unitPrice: string;
     taxPercentage: string;
   }) {
-    const [created] = await db
-      .insert(cartItems)
-      .values({
-        cartId: payload.cartId,
-        productId: payload.productId,
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("cart_items")
+      .insert({
+        cart_id: payload.cartId,
+        product_id: payload.productId,
         quantity: payload.quantity,
-        unitPrice: payload.unitPrice,
-        taxPercentage: payload.taxPercentage,
+        unit_price: toMoneyNumber(payload.unitPrice),
+        tax_percentage: toMoneyNumber(payload.taxPercentage),
       })
-      .returning();
-    return created;
+      .select("*")
+      .single();
+
+    throwOnSupabaseError(error);
+    if (!data) {
+      throw new Error("Cart item creation failed.");
+    }
+    return mapCartItemRow(data);
   }
 
   async updateCartItemQuantity(payload: { cartItemId: string; quantity: number }) {
-    const [updated] = await db
-      .update(cartItems)
-      .set({ quantity: payload.quantity })
-      .where(eq(cartItems.id, payload.cartItemId))
-      .returning();
-    return updated ?? null;
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("cart_items")
+      .update({ quantity: payload.quantity })
+      .eq("id", payload.cartItemId)
+      .select("*")
+      .maybeSingle();
+
+    throwOnSupabaseError(error);
+    return data ? mapCartItemRow(data) : null;
   }
 
   async deleteCartItem(cartItemId: string) {
-    const [deleted] = await db.delete(cartItems).where(eq(cartItems.id, cartItemId)).returning();
-    return deleted ?? null;
+    const supabase = await createClient();
+    const { data, error } = await supabase.from("cart_items").delete().eq("id", cartItemId).select("*").maybeSingle();
+
+    throwOnSupabaseError(error);
+    return data ? mapCartItemRow(data) : null;
   }
 
   async clearCart(cartId: string) {
-    await db.delete(cartItems).where(eq(cartItems.cartId, cartId));
+    const supabase = await createClient();
+    const { error } = await supabase.from("cart_items").delete().eq("cart_id", cartId);
+    throwOnSupabaseError(error);
   }
 }
 

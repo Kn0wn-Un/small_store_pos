@@ -2,7 +2,6 @@ import { createProductSchema } from "../schemas/create-product.schema";
 import { CreateProductRepository } from "../repositories/create-product.repository";
 import { GetProductRepository } from "../repositories/get-product.repository";
 import { formatPrice } from "../utils/format-price";
-import { initializeInventoryService } from "./initialize-inventory.service";
 import { validateProductService } from "./validate-product.service";
 import type { ProductMutationActor, ProductResponse } from "../types/product.types";
 
@@ -56,35 +55,27 @@ export class CreateProductService {
     }
 
     try {
-      const createdProductId = await createProductRepository.withTransaction(async (tx) => {
-        const createdProduct = await createProductRepository.createProductTx(tx, {
-          categoryId: parsed.data.categoryId,
-          name: normalizedName,
-          description: parsed.data.description ?? null,
-          imageUrl: parsed.data.imageUrl ?? null,
-          salePrice: formatPrice(normalizedPrice),
-          isActive: parsed.data.isActive ?? true,
-        });
-
-        await initializeInventoryService.initializeForNewProduct(tx, {
-          productId: createdProduct.id,
-          actorUserId: actor.userId,
-        });
-
-        return createdProduct.id;
+      const created = await createProductRepository.createProductWithInventory({
+        categoryId: parsed.data.categoryId,
+        name: normalizedName,
+        description: parsed.data.description ?? null,
+        imageUrl: parsed.data.imageUrl ?? null,
+        salePrice: formatPrice(normalizedPrice),
+        isActive: parsed.data.isActive ?? true,
+        actorUserId: actor.userId,
       });
 
       return {
         success: true,
         message: "Product created successfully.",
-        data: { id: createdProductId },
+        data: { id: created.product.id },
       };
     } catch {
       return {
         success: false,
         message: "Unable to create product right now.",
         data: null,
-        errors: [{ field: "general", message: "Creation transaction failed.", code: "TX_FAILED" }],
+        errors: [{ field: "general", message: "Product creation failed.", code: "CREATE_FAILED" }],
       };
     }
   }

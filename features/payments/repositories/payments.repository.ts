@@ -1,48 +1,45 @@
-import { and, eq, or } from "drizzle-orm";
-import { db } from "@/db";
-import { payments } from "@/db/schema";
-import type { DbTransaction } from "@/lib/transaction";
+import { createClient } from "@/supabase/server";
+import { mapPaymentRow } from "@/lib/supabase/mappers";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
 
 export class PaymentsRepository {
-  async createPaymentTx(
-    tx: DbTransaction,
-    payload: {
-      orderId: string;
-      provider: "cash" | "upi" | "card";
-      method: "cash" | "upi" | "card" | "bank_transfer";
-      amount: string;
-      status: "pending" | "paid" | "failed" | "refunded" | "partially_refunded";
-      transactionId?: string;
-      metadata?: Record<string, unknown>;
-    },
-  ) {
-    const [created] = await tx.insert(payments).values(payload).returning();
-    return created;
-  }
-
   async getPaymentByOrderOrTxRef(payload: { orderId: string; transactionId?: string }) {
-    const conditions = [eq(payments.orderId, payload.orderId)];
+    const supabase = await createClient();
+
     if (payload.transactionId) {
-      conditions.push(eq(payments.transactionId, payload.transactionId));
+      const { data, error } = await supabase
+        .from("payments")
+        .select("*")
+        .or(`order_id.eq.${payload.orderId},transaction_id.eq.${payload.transactionId}`)
+        .limit(1)
+        .maybeSingle();
+
+      throwOnSupabaseError(error);
+      return data ? mapPaymentRow(data) : null;
     }
-    const [row] = await db
-      .select()
-      .from(payments)
-      .where(conditions.length > 1 ? or(...conditions) : conditions[0])
-      .limit(1);
-    return row ?? null;
+
+    const { data, error } = await supabase.from("payments").select("*").eq("order_id", payload.orderId).maybeSingle();
+    throwOnSupabaseError(error);
+    return data ? mapPaymentRow(data) : null;
   }
 
-  async updatePaymentStatus(payload: { paymentId: string; status: "pending" | "paid" | "failed" | "refunded" | "partially_refunded" }) {
-    const [updated] = await db
-      .update(payments)
-      .set({
+  async updatePaymentStatus(payload: {
+    paymentId: string;
+    status: "pending" | "paid" | "failed" | "refunded" | "partially_refunded";
+  }) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("payments")
+      .update({
         status: payload.status,
-        paidAt: payload.status === "paid" ? new Date() : null,
+        paid_at: payload.status === "paid" ? new Date().toISOString() : null,
       })
-      .where(and(eq(payments.id, payload.paymentId)))
-      .returning();
-    return updated ?? null;
+      .eq("id", payload.paymentId)
+      .select("*")
+      .maybeSingle();
+
+    throwOnSupabaseError(error);
+    return data ? mapPaymentRow(data) : null;
   }
 }
 

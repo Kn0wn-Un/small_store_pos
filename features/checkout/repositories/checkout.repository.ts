@@ -1,15 +1,19 @@
-import { and, eq, isNull } from "drizzle-orm";
-import { db } from "@/db";
-import { addresses } from "@/db/schema";
+import { createClient } from "@/supabase/server";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
 
 export class CheckoutRepository {
   async validateAddressForUser(payload: { addressId: string; userId: string }) {
-    const [row] = await db
-      .select({ id: addresses.id })
-      .from(addresses)
-      .where(and(eq(addresses.id, payload.addressId), eq(addresses.userId, payload.userId), isNull(addresses.deletedAt)))
-      .limit(1);
-    return Boolean(row);
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("addresses")
+      .select("id")
+      .eq("id", payload.addressId)
+      .eq("user_id", payload.userId)
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    throwOnSupabaseError(error);
+    return Boolean(data);
   }
 }
 

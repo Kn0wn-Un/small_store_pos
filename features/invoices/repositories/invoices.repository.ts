@@ -1,29 +1,20 @@
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { invoices } from "@/db/schema";
-import type { DbTransaction } from "@/lib/transaction";
+import { createClient } from "@/supabase/server";
+import { mapInvoiceRow } from "@/lib/supabase/mappers";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
 
 export class InvoicesRepository {
-  async createInvoiceTx(
-    tx: DbTransaction,
-    payload: {
-      invoiceNumber: string;
-      orderId: string;
-      pdfUrl?: string;
-    },
-  ) {
-    const [created] = await tx.insert(invoices).values(payload).returning();
-    return created;
-  }
-
   async getByOrderId(orderId: string) {
-    const [row] = await db.select().from(invoices).where(eq(invoices.orderId, orderId)).limit(1);
-    return row ?? null;
+    const supabase = await createClient();
+    const { data, error } = await supabase.from("invoices").select("*").eq("order_id", orderId).maybeSingle();
+    throwOnSupabaseError(error);
+    return data ? mapInvoiceRow(data) : null;
   }
 
   async getByInvoiceNumber(invoiceNumber: string) {
-    const [row] = await db.select().from(invoices).where(eq(invoices.invoiceNumber, invoiceNumber)).limit(1);
-    return row ?? null;
+    const supabase = await createClient();
+    const { data, error } = await supabase.from("invoices").select("*").eq("invoice_number", invoiceNumber).maybeSingle();
+    throwOnSupabaseError(error);
+    return data ? mapInvoiceRow(data) : null;
   }
 }
 

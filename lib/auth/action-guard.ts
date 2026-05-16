@@ -1,9 +1,7 @@
-import { and, eq } from "drizzle-orm";
 import type { Role } from "@/constants/roles";
-import { db } from "@/db";
-import { users } from "@/db/schema";
 import { createClient } from "@/supabase/server";
 import type { ActionResult, AuthenticatedActor } from "@/types/action-result";
+import { getActiveUserProfile } from "./get-user-profile";
 import { hasRole } from "./rbac";
 
 export async function authorizeActionRole(allowedRoles: readonly Role[]): Promise<ActionResult<AuthenticatedActor>> {
@@ -19,15 +17,7 @@ export async function authorizeActionRole(allowedRoles: readonly Role[]): Promis
     };
   }
 
-  const [profile] = await db
-    .select({
-      id: users.id,
-      role: users.role,
-      isActive: users.isActive,
-    })
-    .from(users)
-    .where(and(eq(users.id, authData.user.id), eq(users.isActive, true)))
-    .limit(1);
+  const profile = await getActiveUserProfile(authData.user.id);
 
   if (!profile?.isActive || !hasRole(profile.role, allowedRoles)) {
     return {

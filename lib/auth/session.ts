@@ -15,9 +15,15 @@ export async function getServerSession() {
     .eq("id", user.id)
     .maybeSingle();
 
+  const normalizedRole = (profile?.role ?? "customer").toLowerCase();
+  const role: Role =
+    normalizedRole === "admin" || normalizedRole === "cashier" || normalizedRole === "customer"
+      ? normalizedRole
+      : "customer";
+
   return {
     id: user.id,
     email: user.email ?? "",
-    role: (profile?.role ?? "customer") as Role,
+    role,
   };
 }

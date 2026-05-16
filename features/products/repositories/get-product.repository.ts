@@ -1,61 +1,71 @@
-import { and, eq, isNull, ne, sql } from "drizzle-orm";
-import { db } from "@/db";
-import { categories, products } from "@/db/schema";
+import { createClient } from "@/supabase/server";
+import { mapProductItem } from "@/lib/supabase/mappers";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
+
+const productSelect = `
+  id,
+  name,
+  description,
+  image_url,
+  category_id,
+  sale_price,
+  is_active,
+  created_at,
+  updated_at,
+  categories (
+    name
+  )
+`;
 
 export class GetProductRepository {
   async getById(productId: string) {
-    const [row] = await db
-      .select({
-        id: products.id,
-        name: products.name,
-        description: products.description,
-        imageUrl: products.imageUrl,
-        categoryId: products.categoryId,
-        categoryName: categories.name,
-        salePrice: products.salePrice,
-        isActive: products.isActive,
-        createdAt: products.createdAt,
-        updatedAt: products.updatedAt,
-      })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(and(eq(products.id, productId), isNull(products.deletedAt)))
-      .limit(1);
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(productSelect)
+      .eq("id", productId)
+      .is("deleted_at", null)
+      .maybeSingle();
 
-    return row ?? null;
+    throwOnSupabaseError(error);
+    if (!data) {
+      return null;
+    }
+
+    const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
+
+    return mapProductItem(data, category ?? null);
   }
 
   async findByNormalizedName(name: string, options?: { excludeProductId?: string }) {
-    const conditions = [
-      sql`lower(${products.name}) = lower(${name})`,
-      isNull(products.deletedAt),
-    ];
+    const supabase = await createClient();
+    let query = supabase
+      .from("products")
+      .select("id, name")
+      .is("deleted_at", null)
+      .ilike("name", name);
 
     if (options?.excludeProductId) {
-      conditions.push(ne(products.id, options.excludeProductId));
+      query = query.neq("id", options.excludeProductId);
     }
 
-    const [row] = await db
-      .select({
-        id: products.id,
-        name: products.name,
-      })
-      .from(products)
-      .where(and(...conditions))
-      .limit(1);
+    const { data, error } = await query.limit(1).maybeSingle();
+    throwOnSupabaseError(error);
 
-    return row ?? null;
+    return data ?? null;
   }
 
   async categoryExists(categoryId: string) {
-    const [row] = await db
-      .select({
-        id: categories.id,
-      })
-      .from(categories)
-      .where(and(eq(categories.id, categoryId), eq(categories.isActive, true), isNull(categories.deletedAt)))
-      .limit(1);
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("id", categoryId)
+      .eq("is_active", true)
+      .is("deleted_at", null)
+      .maybeSingle();
 
-    return Boolean(row);
+    throwOnSupabaseError(error);
+    return Boolean(data);
   }
 }

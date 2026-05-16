@@ -18,7 +18,7 @@ export function Navbar() {
           <p className="mt-1 text-xs tracking-[4px] text-gray-200 uppercase">Purity At Its Best</p>
         </div>
 
-        <nav className="hidden items-center gap-10 text-sm font-medium lg:flex">
+        <nav className="hidden items-center gap-10 text-sm font-medium lg:flex text-white">
           <Link href="/" className="transition hover:text-[#B69224]">Home</Link>
           <Link href="/products" className="transition hover:text-[#B69224]">Products</Link>
           <a href="#process" className="transition hover:text-[#B69224]">Our Process</a>

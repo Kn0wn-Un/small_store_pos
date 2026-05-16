@@ -1,62 +1,62 @@
-import { and, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
-import { db } from "@/db";
-import { categories, products } from "@/db/schema";
+import { createClient } from "@/supabase/server";
+import { mapProductItem } from "@/lib/supabase/mappers";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
 import type { ProductFiltersInput } from "../schemas/product-filters.schema";
+
+const productSelect = `
+  id,
+  name,
+  description,
+  image_url,
+  category_id,
+  sale_price,
+  is_active,
+  created_at,
+  updated_at,
+  categories (
+    name
+  )
+`;
 
 export class ListProductsRepository {
   async list(filters: ProductFiltersInput) {
-    const conditions = [isNull(products.deletedAt)];
+    const supabase = await createClient();
+    const offset = (filters.page - 1) * filters.pageSize;
+
+    let query = supabase
+      .from("products")
+      .select(productSelect, { count: "exact" })
+      .is("deleted_at", null);
 
     if (filters.search) {
       const searchPattern = `%${filters.search}%`;
-      const searchCondition = or(ilike(products.name, searchPattern), ilike(categories.name, searchPattern));
-      if (searchCondition) {
-        conditions.push(searchCondition);
-      }
+      query = query.or(`name.ilike."${searchPattern}",categories.name.ilike."${searchPattern}"`);
     }
 
     if (filters.categoryId) {
-      conditions.push(eq(products.categoryId, filters.categoryId));
+      query = query.eq("category_id", filters.categoryId);
     }
 
     if (filters.storefrontOnly) {
-      conditions.push(eq(products.isActive, true));
+      query = query.eq("is_active", true);
     } else if (typeof filters.isActive === "boolean") {
-      conditions.push(eq(products.isActive, filters.isActive));
+      query = query.eq("is_active", filters.isActive);
     }
 
-    const whereClause = and(...conditions);
-    const offset = (filters.page - 1) * filters.pageSize;
+    const { data, error, count } = await query
+      .order("updated_at", { ascending: false })
+      .range(offset, offset + filters.pageSize - 1);
 
-    const [countResult] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(whereClause);
+    throwOnSupabaseError(error);
 
-    const rows = await db
-      .select({
-        id: products.id,
-        name: products.name,
-        description: products.description,
-        imageUrl: products.imageUrl,
-        categoryId: products.categoryId,
-        categoryName: categories.name,
-        salePrice: products.salePrice,
-        isActive: products.isActive,
-        createdAt: products.createdAt,
-        updatedAt: products.updatedAt,
-      })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(whereClause)
-      .orderBy(desc(products.updatedAt))
-      .limit(filters.pageSize)
-      .offset(offset);
+    const rows = (data ?? []).map((row) => {
+      const category = Array.isArray(row.categories) ? row.categories[0] : row.categories;
+      return mapProductItem(row, category ?? null);
+    });
 
     return {
       rows,
-      total: countResult?.count ?? 0,
+      total: count ?? 0,
     };
   }
 }

@@ -12,7 +12,7 @@ type ProductGridProps = {
 
 export function ProductGrid({ products }: ProductGridProps) {
   const [search, setSearch] = useState("");
-  useFadeUpAnimation(".storefront-product-card");
+  const gridRef = useFadeUpAnimation<HTMLDivElement>();
 
   const filteredProducts = useMemo(() => {
     const query = search.toLowerCase().trim();
@@ -28,7 +28,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           <h2 className="heading-font navy text-6xl font-bold">Best Selling Oils</h2>
         </div>
         <ProductSearch value={search} onChange={setSearch} />
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+        <div ref={gridRef} className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((product) => (
             <div key={product.id} className="storefront-product-card">
               <ProductCard product={product} />

@@ -1,50 +1,59 @@
-import { and, desc, eq, isNull, sql } from "drizzle-orm";
-import { db } from "@/db";
-import { products } from "@/db/schema/catalog";
-import { inventory } from "@/db/schema/inventory";
+import { createClient } from "@/supabase/server";
+import { mapStorefrontProduct } from "@/lib/supabase/mappers";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
+
+const storefrontSelect = `
+  id,
+  name,
+  description,
+  image_url,
+  category_id,
+  sale_price,
+  is_active,
+  categories ( name ),
+  inventory (
+    stock_quantity,
+    low_stock_threshold
+  )
+`;
 
 export class StorefrontProductsRepository {
   async getFeaturedProducts(limit = 6) {
-    return db
-      .select({
-        id: products.id,
-        name: products.name,
-        description: products.description,
-        imageUrl: products.imageUrl,
-        categoryId: products.categoryId,
-        categoryName: sql<string | null>`null`,
-        salePrice: products.salePrice,
-        isActive: products.isActive,
-        stockQuantity: inventory.stockQuantity,
-        lowStockThreshold: inventory.lowStockThreshold,
-      })
-      .from(products)
-      .leftJoin(inventory, eq(inventory.productId, products.id))
-      .where(and(eq(products.isActive, true), isNull(products.deletedAt)))
-      .orderBy(desc(products.updatedAt))
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(storefrontSelect)
+      .eq("is_active", true)
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
       .limit(limit);
+
+    throwOnSupabaseError(error);
+
+    return (data ?? []).map((row) => {
+      const category = Array.isArray(row.categories) ? row.categories[0] : row.categories;
+      const inventoryRow = Array.isArray(row.inventory) ? row.inventory[0] : row.inventory;
+      return mapStorefrontProduct(row, inventoryRow ?? null, category ?? null);
+    });
   }
 
   async getProductById(productId: string) {
-    const [row] = await db
-      .select({
-        id: products.id,
-        name: products.name,
-        description: products.description,
-        imageUrl: products.imageUrl,
-        categoryId: products.categoryId,
-        categoryName: sql<string | null>`null`,
-        salePrice: products.salePrice,
-        isActive: products.isActive,
-        stockQuantity: inventory.stockQuantity,
-        lowStockThreshold: inventory.lowStockThreshold,
-      })
-      .from(products)
-      .leftJoin(inventory, eq(inventory.productId, products.id))
-      .where(and(eq(products.id, productId), isNull(products.deletedAt)))
-      .limit(1);
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(storefrontSelect)
+      .eq("id", productId)
+      .is("deleted_at", null)
+      .maybeSingle();
 
-    return row ?? null;
+    throwOnSupabaseError(error);
+    if (!data) {
+      return null;
+    }
+
+    const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
+    const inventoryRow = Array.isArray(data.inventory) ? data.inventory[0] : data.inventory;
+    return mapStorefrontProduct(data, inventoryRow ?? null, category ?? null);
   }
 }
 

@@ -1,7 +1,6 @@
 import { inventoryMutationSchema } from "../schemas/inventory-mutation.schema";
 import { inventoryRepository } from "../repositories/inventory.repository";
 import type { InventoryActor, InventoryResult } from "../types/inventory.types";
-import { auditRepository } from "@/features/audit/repositories/audit.repository";
 
 export class ReserveStockService {
   async execute(payload: unknown, actor: InventoryActor): Promise<InventoryResult> {
@@ -15,47 +14,15 @@ export class ReserveStockService {
       };
     }
 
-    return inventoryRepository.withTransaction(async (tx) => {
-      const row = await inventoryRepository.getInventoryForUpdateTx(tx, parsed.data.productId);
-      if (!row) {
-        return { success: false, message: "Inventory row not found.", data: null, errors: [{ field: "productId", message: "No inventory row found." }] };
-      }
-
-      const availableStock = row.stockQuantity - row.reservedStock;
-      if (availableStock < parsed.data.quantity) {
-        return { success: false, message: "Insufficient available stock.", data: null, errors: [{ field: "quantity", message: "Not enough available stock to reserve." }] };
-      }
-
-      const updated = await inventoryRepository.updateStockAndReservedTx(tx, {
-        productId: row.productId,
-        stockQuantity: row.stockQuantity,
-        reservedStock: row.reservedStock + parsed.data.quantity,
-        actorUserId: actor.userId,
-      });
-
-      if (!updated) {
-        return { success: false, message: "Reserve stock failed.", data: null, errors: [{ field: "quantity", message: "Failed to reserve stock." }] };
-      }
-
-      await inventoryRepository.insertInventoryLogTx(tx, {
+    try {
+      const updated = await inventoryRepository.adjustInventoryAtomic({
+        operation: "reserve",
         productId: parsed.data.productId,
+        actorUserId: actor.userId,
+        quantity: parsed.data.quantity,
         source: parsed.data.source,
-        reason: "adjustment",
-        quantityBefore: row.stockQuantity,
-        quantityChange: 0,
-        quantityAfter: row.stockQuantity,
-        actorUserId: actor.userId,
-        notes: parsed.data.notes ?? `Reserved quantity increased by ${parsed.data.quantity}.`,
+        notes: parsed.data.notes,
         referenceOrderId: parsed.data.referenceOrderId,
-      });
-
-      await auditRepository.createLogTx(tx, {
-        entityName: "inventory",
-        entityId: row.id,
-        action: "update",
-        actorUserId: actor.userId,
-        beforeState: { stockQuantity: row.stockQuantity, reservedStock: row.reservedStock },
-        afterState: { stockQuantity: updated.stockQuantity, reservedStock: updated.reservedStock },
       });
 
       return {
@@ -68,7 +35,16 @@ export class ReserveStockService {
           updatedAt: updated.updatedAt,
         },
       };
-    });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Reserve stock failed.";
+      if (message.includes("INVENTORY_NOT_FOUND")) {
+        return { success: false, message: "Inventory row not found.", data: null, errors: [{ field: "productId", message: "No inventory row found." }] };
+      }
+      if (message.includes("INSUFFICIENT_AVAILABLE_STOCK")) {
+        return { success: false, message: "Insufficient available stock.", data: null, errors: [{ field: "quantity", message: "Not enough available stock to reserve." }] };
+      }
+      return { success: false, message: "Reserve stock failed.", data: null, errors: [{ field: "quantity", message: "Failed to reserve stock." }] };
+    }
   }
 }
 

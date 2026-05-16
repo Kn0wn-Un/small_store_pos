@@ -1,12 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { createOrderSchema, type CreateOrderInput } from "../schemas/create-order.schema";
+import { createOrderSchema } from "../schemas/create-order.schema";
 import { cancelOrderSchema, getOrderSchema, listOrdersSchema, updateOrderStatusSchema } from "../schemas/order-management.schema";
 import { OrdersRepository } from "../repositories/orders.repository";
 import { invoicesService } from "@/features/invoices/services/invoices.service";
 import { auditRepository } from "@/features/audit/repositories/audit.repository";
 
 const repository = new OrdersRepository();
-type InventoryRow = Awaited<ReturnType<OrdersRepository["lockAndGetInventoryRowsTx"]>>[number];
 
 export class OrdersService {
   async createOrder(payload: unknown) {
@@ -22,73 +21,42 @@ export class OrdersService {
 
     const data = parsed.data;
 
-    return repository.withTransaction(async (tx) => {
-      const inventoryRows = await repository.lockAndGetInventoryRowsTx(
-        tx,
-        data.items.map((item) => item.productId),
-      );
-
-      for (const item of data.items) {
-        const row = inventoryRows.find((r: InventoryRow) => r.productId === item.productId);
-        if (!row || row.stockQuantity < item.quantity) {
-          throw new Error(`Insufficient stock for product ${item.productId}`);
-        }
-      }
-
-      await repository.decrementInventoryTx(
-        tx,
-        data.items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
-      );
-
-      const createdOrder = await repository.createOrderTx(tx, {
-        ...data,
+    try {
+      const created = await repository.createOrderAtomic({
         orderNumber: `ORD-${randomUUID().slice(0, 8).toUpperCase()}`,
-      } as CreateOrderInput & { orderNumber: string });
-
-      const createdPayment = await repository.createPaymentTx(tx, {
-        orderId: createdOrder.id,
-        provider: data.paymentProvider,
-        method: data.paymentMethod,
-        amount: data.totalAmount,
-        status: data.paymentStatus,
-        transactionId: data.transactionId,
-      });
-
-      const createdInvoice = await repository.createInvoiceTx(tx, {
-        orderId: createdOrder.id,
-        invoiceNumber: invoicesService.buildInvoiceNumber(),
-      });
-
-      await repository.createSalesLogTx(tx, {
-        orderId: createdOrder.id,
+        customerId: data.customerId,
         source: data.source,
-        totalAmount: data.totalAmount,
+        subtotalAmount: data.subtotalAmount,
         taxAmount: data.taxAmount,
         discountAmount: data.discountAmount,
-      });
-
-      await auditRepository.createLogTx(tx, {
-        entityName: "orders",
-        entityId: createdOrder.id,
-        action: "create",
+        totalAmount: data.totalAmount,
+        items: data.items,
+        paymentProvider: data.paymentProvider,
+        paymentMethod: data.paymentMethod,
+        paymentAmount: data.totalAmount,
+        paymentStatus: data.paymentStatus,
+        transactionId: data.transactionId,
+        invoiceNumber: invoicesService.buildInvoiceNumber(),
         actorUserId: data.customerId,
-        afterState: {
-          orderId: createdOrder.id,
-          paymentId: createdPayment.id,
-          invoiceId: createdInvoice.id,
-        },
       });
 
       return {
         success: true,
         message: "Order created successfully.",
         data: {
-          orderId: createdOrder.id,
-          paymentId: createdPayment.id,
-          invoiceId: createdInvoice.id,
+          orderId: created.order.id,
+          paymentId: created.payment.id,
+          invoiceId: created.invoice.id,
         },
       };
-    });
+    } catch {
+      return {
+        success: false,
+        message: "Unable to create order right now.",
+        data: null,
+        errors: [{ field: "general", message: "Order creation failed." }],
+      };
+    }
   }
 
   async cancelOrder(payload: unknown) {

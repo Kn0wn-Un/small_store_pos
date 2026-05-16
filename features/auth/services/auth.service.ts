@@ -1,12 +1,21 @@
 import { DEFAULT_REDIRECT_BY_ROLE } from "@/constants/routes";
+import type { Role } from "@/constants/roles";
 import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from "@/schemas/auth";
 import type { AuthActionState } from "@/types/auth";
 import { AuthRepository } from "../repositories/auth.repository";
 
 const authRepository = new AuthRepository();
 
+function normalizeRole(role: string | null | undefined): Role {
+  const value = (role ?? "customer").toLowerCase();
+  if (value === "admin" || value === "cashier" || value === "customer") {
+    return value;
+  }
+  return "customer";
+}
+
 export class AuthService {
-  async login(payload: unknown): Promise<AuthActionState> {
+  async login(payload: unknown): Promise<AuthActionState & { role?: Role }> {
     const parsed = loginSchema.safeParse(payload);
     if (!parsed.success) {
       return {
@@ -22,9 +31,15 @@ export class AuthService {
     }
 
     const roleLookup = await authRepository.getUserRole(data.user.id);
-    const redirectTo = DEFAULT_REDIRECT_BY_ROLE[(roleLookup.data ?? "customer") as keyof typeof DEFAULT_REDIRECT_BY_ROLE];
+    const role = normalizeRole(roleLookup.data);
+    const redirectTo = DEFAULT_REDIRECT_BY_ROLE[role];
 
-    return { success: true, message: "Signed in successfully.", redirectTo };
+    return {
+      success: true,
+      message: "Signed in successfully.",
+      redirectTo,
+      role,
+    };
   }
 
   async register(payload: unknown): Promise<AuthActionState> {

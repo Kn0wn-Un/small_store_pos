@@ -1,21 +1,43 @@
 import { type NextRequest, NextResponse } from "next/server";
+
+import type { Role } from "@/constants/roles";
+import { DEFAULT_REDIRECT_BY_ROLE } from "@/constants/routes";
 import { updateSession } from "@/supabase/middleware";
 
 const ADMIN_PREFIX = "/admin";
 const POS_PREFIX = "/pos";
 const AUTH_ROUTES = new Set(["/login", "/register", "/forgot-password", "/reset-password"]);
 
+function normalizeRole(role: string | null | undefined): Role {
+  const value = (role ?? "customer").toLowerCase();
+  if (value === "admin" || value === "cashier" || value === "customer") {
+    return value;
+  }
+  return "customer";
+}
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const { supabase, response } = updateSession(request);
+  const { supabase, response, user } = await updateSession(request);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAdminArea = pathname.startsWith(ADMIN_PREFIX);
-  const isPosArea = pathname.startsWith(POS_PREFIX);
+  const isAdminArea = pathname === ADMIN_PREFIX || pathname.startsWith(`${ADMIN_PREFIX}/`);
+  const isPosArea = pathname === POS_PREFIX || pathname.startsWith(`${POS_PREFIX}/`);
   const isAuthRoute = AUTH_ROUTES.has(pathname);
+
+  let role: Role = "customer";
+  if (user) {
+    const { data: profile } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    role = normalizeRole(profile?.role);
+  }
+
+  if (pathname === ADMIN_PREFIX) {
+    return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE.admin, request.url));
+  }
 
   if ((isAdminArea || isPosArea) && !user) {
     const loginUrl = request.nextUrl.clone();
@@ -24,28 +46,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  let role: string | null = null;
-  if (user) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
-    role = profile?.role ?? "customer";
-  }
-
   if (isAdminArea && role !== "admin") {
-    return NextResponse.redirect(new URL("/products", request.url));
+    return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE[role], request.url));
   }
 
   if (isPosArea && role !== "admin" && role !== "cashier") {
-    return NextResponse.redirect(new URL("/products", request.url));
+    return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE[role], request.url));
   }
 
   if (isAuthRoute && user) {
-    const destination =
-      role === "admin" ? "/admin/analytics" : role === "cashier" ? "/pos/billing" : "/products";
-    return NextResponse.redirect(new URL(destination, request.url));
+    return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE[role], request.url));
   }
 
   return response;

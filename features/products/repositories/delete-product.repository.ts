@@ -1,20 +1,21 @@
-import { and, eq, isNull } from "drizzle-orm";
-import { db } from "@/db";
-import { products } from "@/db/schema";
+import { createClient } from "@/supabase/server";
+import { throwOnSupabaseError } from "@/lib/supabase/query";
 
 export class DeleteProductRepository {
   async softDeleteById(productId: string) {
-    const [deleted] = await db
-      .update(products)
-      .set({
-        isActive: false,
-        deletedAt: new Date(),
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .update({
+        is_active: false,
+        deleted_at: new Date().toISOString(),
       })
-      .where(and(eq(products.id, productId), isNull(products.deletedAt)))
-      .returning({
-        id: products.id,
-      });
+      .eq("id", productId)
+      .is("deleted_at", null)
+      .select("id")
+      .maybeSingle();
 
-    return deleted ?? null;
+    throwOnSupabaseError(error);
+    return data ?? null;
   }
 }

@@ -40,7 +40,6 @@ export class AuthRepository {
       .select("role")
       .eq("id", userId)
       .maybeSingle();
-
     return { data: data?.role ?? "customer", error };
   }
 }
