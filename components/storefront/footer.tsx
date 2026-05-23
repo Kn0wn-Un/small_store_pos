@@ -1,10 +1,10 @@
 export function Footer() {
   return (
-    <footer id="contact" className="luxury-nav py-20 text-white">
-      <div className="mx-auto grid w-full max-w-7xl gap-16 px-6 md:grid-cols-4">
+    <footer id="contact" className="luxury-nav py-12 text-white">
+      <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 md:grid-cols-4">
         <div id="about">
           <h2 className="heading-font mb-4 text-5xl text-white">SATHVAM</h2>
-          <p className="mb-8 leading-relaxed text-gray-300">Traditional oils crafted with honesty, purity, and heritage.</p>
+          <p className="mb-6 leading-relaxed text-gray-300">Traditional oils crafted with honesty, purity, and heritage.</p>
           <div className="flex gap-4 text-2xl">
             {["f", "◎", "◉"].map((icon) => (
               <div
@@ -18,7 +18,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-6 text-2xl font-semibold text-[#B69224]">Company</h3>
+          <h3 className="mb-4 text-2xl font-semibold text-[#B69224]">Company</h3>
           <ul className="space-y-4 text-gray-300">
             <li>About Us</li>
             <li>Our Story</li>
@@ -28,7 +28,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-6 text-2xl font-semibold text-[#B69224]">Products</h3>
+          <h3 className="mb-4 text-2xl font-semibold text-[#B69224]">Products</h3>
           <ul className="space-y-4 text-gray-300">
             <li>Sesame Oil</li>
             <li>Coconut Oil</li>
@@ -38,7 +38,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-6 text-2xl font-semibold text-[#B69224]">Contact</h3>
+          <h3 className="mb-4 text-2xl font-semibold text-[#B69224]">Contact</h3>
           <ul className="space-y-4 leading-relaxed text-gray-300">
             <li>Bangalore, India</li>
             <li>hello@sathvam.com</li>
@@ -46,7 +46,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="mt-16 border-t border-white/10 pt-8 text-center text-sm text-gray-400">©️ 2026 Sathvam. All rights reserved.</div>
+      <div className="mt-10 border-t border-white/10 pt-6 text-center text-sm text-gray-400">©️ 2026 Sathvam. All rights reserved.</div>
     </footer>
   );
 }

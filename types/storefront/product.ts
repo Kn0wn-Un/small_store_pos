@@ -9,4 +9,5 @@ export type StorefrontProduct = {
   isActive: boolean;
   stockQuantity: number;
   lowStockThreshold: number;
+  inStock?: boolean;
 };

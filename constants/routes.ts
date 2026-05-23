@@ -7,6 +7,6 @@ export const DASHBOARD_ROUTES = {
 
 export const DEFAULT_REDIRECT_BY_ROLE = {
   admin: "/admin/analytics",
-  cashier: "/pos/billing",
+  cashier: "/cashier/pos",
   customer: "/products",
 } as const;

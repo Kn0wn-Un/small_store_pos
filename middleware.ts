@@ -6,6 +6,7 @@ import { updateSession } from "@/supabase/middleware";
 
 const ADMIN_PREFIX = "/admin";
 const POS_PREFIX = "/pos";
+const CASHIER_PREFIX = "/cashier";
 const AUTH_ROUTES = new Set(["/login", "/register", "/forgot-password", "/reset-password"]);
 
 function normalizeRole(role: string | null | undefined): Role {
@@ -22,6 +23,7 @@ export async function middleware(request: NextRequest) {
 
   const isAdminArea = pathname === ADMIN_PREFIX || pathname.startsWith(`${ADMIN_PREFIX}/`);
   const isPosArea = pathname === POS_PREFIX || pathname.startsWith(`${POS_PREFIX}/`);
+  const isCashierArea = pathname === CASHIER_PREFIX || pathname.startsWith(`${CASHIER_PREFIX}/`);
   const isAuthRoute = AUTH_ROUTES.has(pathname);
 
   let role: Role = "customer";
@@ -39,7 +41,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE.admin, request.url));
   }
 
-  if ((isAdminArea || isPosArea) && !user) {
+  if ((isAdminArea || isPosArea || isCashierArea) && !user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("redirectTo", pathname);
@@ -50,7 +52,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE[role], request.url));
   }
 
-  if (isPosArea && role !== "admin" && role !== "cashier") {
+  if ((isPosArea || isCashierArea) && role !== "admin" && role !== "cashier") {
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT_BY_ROLE[role], request.url));
   }
 

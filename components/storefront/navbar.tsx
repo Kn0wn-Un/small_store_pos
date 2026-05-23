@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { CartSheet } from "./cart-sheet";
 
 export function Navbar() {
   return (
     <header className="luxury-nav sticky top-0 z-50 shadow-lg">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-5">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-3">
         <div>
           <h1 className="heading-font text-5xl leading-none tracking-wide text-white">SATHVAM</h1>
           <div className="mt-1 flex items-center gap-3">
@@ -26,10 +25,7 @@ export function Navbar() {
           <a href="#contact" className="transition hover:text-[#B69224]">Contact</a>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <CartSheet />
-          <Button className="gold-bg px-8 py-4 font-semibold text-[#2C3E57] hover:opacity-90">Shop Now</Button>
-        </div>
+        <CartSheet />
       </div>
     </header>
   );

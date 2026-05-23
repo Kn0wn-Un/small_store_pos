@@ -70,6 +70,8 @@ export function mapStorefrontProduct(
   inventoryRow?: Pick<InventoryRow, "stock_quantity" | "low_stock_threshold"> | null,
   category?: Pick<CategoryRow, "name"> | null,
 ) {
+  const stockQuantity = inventoryRow?.stock_quantity ?? 0;
+
   return {
     id: product.id,
     name: product.name,
@@ -79,8 +81,9 @@ export function mapStorefrontProduct(
     categoryName: category?.name ?? null,
     salePrice: toMoneyString(product.sale_price),
     isActive: product.is_active,
-    stockQuantity: inventoryRow?.stock_quantity ?? 0,
+    stockQuantity,
     lowStockThreshold: inventoryRow?.low_stock_threshold ?? 0,
+    inStock: stockQuantity > 0,
   };
 }
 
