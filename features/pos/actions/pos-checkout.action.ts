@@ -10,11 +10,14 @@ import type { PosCheckoutResult } from "../types/pos.types";
 
 export async function posCheckoutAction(payload: unknown): Promise<ActionResult<PosCheckoutResult>> {
   const auth = await authorizeActionRole([ROLES.ADMIN, ROLES.CASHIER]);
-  if (!auth.success) {
+  if (!auth.success || !auth.data) {
     return { success: false, message: auth.message, data: null, errors: auth.errors };
   }
 
-  const result = await posCheckoutService.execute(payload);
+  const result = await posCheckoutService.execute(payload, {
+    actorUserId: auth.data.userId,
+    cashierUserId: auth.data.userId,
+  });
   if (result.success) {
     await clearPosCartIdCookie();
     revalidatePath("/admin/pos");

@@ -71,6 +71,7 @@ export async function callCreateOrderRpc(params: CreateOrderAtomicParams): Promi
     p_invoice_number: params.invoiceNumber,
     p_invoice_pdf_url: params.invoicePdfUrl ?? null,
     p_actor_user_id: params.actorUserId ?? null,
+    p_cashier_user_id: params.cashierUserId ?? null,
   });
 
   throwOnSupabaseError(error);

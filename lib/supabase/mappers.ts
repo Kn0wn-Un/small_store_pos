@@ -105,6 +105,7 @@ export function mapOrderRow(row: OrderRow) {
     id: row.id,
     orderNumber: row.order_number,
     customerId: row.customer_id,
+    cashierUserId: row.cashier_user_id ?? null,
     source: row.source,
     status: row.status,
     paymentStatus: row.payment_status,

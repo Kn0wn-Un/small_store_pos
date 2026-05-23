@@ -1,11 +1,15 @@
 import type { ActionResult } from "@/types/action-result";
+import type { CreateOrderActorContext } from "@/features/orders/types/order-actor.types";
 import { checkoutService } from "@/features/checkout/services/checkout.service";
 import { posCheckoutSchema } from "../schemas/pos-checkout.schema";
 import type { PosCheckoutResult } from "../types/pos.types";
 import { getPosCartIdFromCookie } from "../utils/pos-cart-cookie";
 
 export class PosCheckoutService {
-  async execute(payload: unknown): Promise<ActionResult<PosCheckoutResult>> {
+  async execute(
+    payload: unknown,
+    actor: CreateOrderActorContext,
+  ): Promise<ActionResult<PosCheckoutResult>> {
     const parsed = posCheckoutSchema.safeParse(payload);
     if (!parsed.success) {
       return {
@@ -26,15 +30,18 @@ export class PosCheckoutService {
       };
     }
 
-    const result = await checkoutService.execute({
-      cartId,
-      customerId: parsed.data.customerId,
-      source: "pos",
-      paymentProvider: parsed.data.paymentProvider,
-      paymentMethod: parsed.data.paymentMethod,
-      transactionId: parsed.data.transactionId,
-      discountAmount: parsed.data.discountAmount,
-    });
+    const result = await checkoutService.execute(
+      {
+        cartId,
+        customerId: parsed.data.customerId,
+        source: "pos",
+        paymentProvider: parsed.data.paymentProvider,
+        paymentMethod: parsed.data.paymentMethod,
+        transactionId: parsed.data.transactionId,
+        discountAmount: parsed.data.discountAmount,
+      },
+      actor,
+    );
 
     if (!result.success || !result.data) {
       return {

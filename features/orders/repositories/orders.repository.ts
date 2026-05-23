@@ -69,11 +69,20 @@ export class OrdersRepository {
     };
   }
 
-  async listOrders(filters: { page: number; pageSize: number; search?: string }) {
+  async listOrders(filters: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    cashierUserId?: string;
+  }) {
     const supabase = await createClient();
     const offset = (filters.page - 1) * filters.pageSize;
 
     let query = supabase.from("orders").select("*", { count: "exact" }).is("deleted_at", null);
+
+    if (filters.cashierUserId) {
+      query = query.eq("cashier_user_id", filters.cashierUserId);
+    }
 
     if (filters.search) {
       query = query.ilike("order_number", `%${filters.search}%`);

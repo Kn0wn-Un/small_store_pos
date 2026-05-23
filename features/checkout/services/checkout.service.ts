@@ -2,11 +2,15 @@ import type { ActionResult } from "@/types/action-result";
 import { addMoney } from "@/utils/money";
 import { cartService } from "@/features/cart/services/cart.service";
 import { ordersService } from "@/features/orders/services/orders.service";
+import type { CreateOrderActorContext } from "@/features/orders/types/order-actor.types";
 import { checkoutSchema } from "../schemas/checkout.schema";
 import { checkoutRepository } from "../repositories/checkout.repository";
 
 export class CheckoutService {
-  async execute(payload: unknown): Promise<ActionResult<Record<string, unknown>>> {
+  async execute(
+    payload: unknown,
+    actor?: CreateOrderActorContext,
+  ): Promise<ActionResult<Record<string, unknown>>> {
     const parsed = checkoutSchema.safeParse(payload);
     if (!parsed.success) {
       return {
@@ -66,7 +70,7 @@ export class CheckoutService {
       })),
     };
 
-    const orderResult = await ordersService.createOrder(orderPayload);
+    const orderResult = await ordersService.createOrder(orderPayload, actor);
     if (!orderResult.success) {
       return orderResult;
     }

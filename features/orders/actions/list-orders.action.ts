@@ -6,7 +6,7 @@ import { ordersService } from "../services/orders.service";
 
 export async function listOrdersAction(payload: unknown) {
   const auth = await authorizeActionRole([ROLES.ADMIN, ROLES.CASHIER]);
-  if (!auth.success) return auth;
+  if (!auth.success || !auth.data) return auth;
 
-  return ordersService.listOrders(payload);
+  return ordersService.listOrders(payload, auth.data);
 }

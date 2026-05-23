@@ -104,6 +104,7 @@ export const orders = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     orderNumber: varchar("order_number", { length: 50 }).notNull(),
     customerId: uuid("customer_id").references(() => users.id, { onDelete: "set null", onUpdate: "cascade" }),
+    cashierUserId: uuid("cashier_user_id").references(() => users.id, { onDelete: "set null", onUpdate: "cascade" }),
     source: orderSourceEnum("source").notNull(),
     status: orderStatusEnum("status").default("pending").notNull(),
     paymentStatus: paymentStatusEnum("payment_status").default("pending").notNull(),
@@ -122,6 +123,7 @@ export const orders = pgTable(
   (table) => [
     uniqueIndex("orders_order_number_unique_idx").on(table.orderNumber),
     index("orders_customer_idx").on(table.customerId),
+    index("orders_cashier_user_idx").on(table.cashierUserId),
     index("orders_source_idx").on(table.source),
     index("orders_status_idx").on(table.status),
     index("orders_payment_status_idx").on(table.paymentStatus),

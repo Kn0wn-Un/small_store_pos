@@ -1,7 +1,8 @@
 import type { Role } from "@/constants/roles";
 
-export function canAccessOrder(role: Role, actorUserId: string, orderCustomerId: string) {
-  if (role === "admin" || role === "cashier") return true;
+/** @deprecated Use canViewOrder from order-access-policy.ts */
+export function canAccessOrder(role: Role, actorUserId: string, orderCustomerId: string | null) {
+  if (role === "admin") return true;
   return actorUserId === orderCustomerId;
 }
 

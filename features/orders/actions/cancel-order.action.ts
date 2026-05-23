@@ -7,9 +7,9 @@ import { ordersService } from "../services/orders.service";
 
 export async function cancelOrderAction(payload: unknown) {
   const auth = await authorizeActionRole([ROLES.ADMIN, ROLES.CASHIER]);
-  if (!auth.success) return auth;
+  if (!auth.success || !auth.data) return auth;
 
-  const result = await ordersService.cancelOrder(payload);
+  const result = await ordersService.cancelOrder(payload, auth.data);
   if (result.success) {
     revalidatePath("/admin/orders");
     revalidatePath("/pos/history");

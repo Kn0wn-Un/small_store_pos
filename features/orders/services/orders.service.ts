@@ -1,14 +1,21 @@
 import { randomUUID } from "node:crypto";
+import {
+  assertCashierFilterAllowed,
+  canViewOrder,
+  resolveOrderListScope,
+} from "@/lib/auth/order-access-policy";
+import type { AuthenticatedActor } from "@/types/action-result";
 import { createOrderSchema } from "../schemas/create-order.schema";
 import { cancelOrderSchema, getOrderSchema, listOrdersSchema, updateOrderStatusSchema } from "../schemas/order-management.schema";
 import { OrdersRepository } from "../repositories/orders.repository";
 import { invoicesService } from "@/features/invoices/services/invoices.service";
 import { auditRepository } from "@/features/audit/repositories/audit.repository";
+import type { CreateOrderActorContext } from "../types/order-actor.types";
 
 const repository = new OrdersRepository();
 
 export class OrdersService {
-  async createOrder(payload: unknown) {
+  async createOrder(payload: unknown, actor?: CreateOrderActorContext) {
     const parsed = createOrderSchema.safeParse(payload);
     if (!parsed.success) {
       return {
@@ -20,6 +27,9 @@ export class OrdersService {
     }
 
     const data = parsed.data;
+    const actorUserId = actor?.actorUserId ?? data.customerId;
+    const cashierUserId =
+      data.source === "pos" ? (actor?.cashierUserId ?? actor?.actorUserId ?? null) : null;
 
     try {
       const created = await repository.createOrderAtomic({
@@ -37,7 +47,8 @@ export class OrdersService {
         paymentStatus: data.paymentStatus,
         transactionId: data.transactionId,
         invoiceNumber: invoicesService.buildInvoiceNumber(),
-        actorUserId: data.customerId,
+        actorUserId,
+        cashierUserId,
       });
 
       return {
@@ -59,10 +70,17 @@ export class OrdersService {
     }
   }
 
-  async cancelOrder(payload: unknown) {
+  async cancelOrder(payload: unknown, actor?: AuthenticatedActor) {
     const parsed = cancelOrderSchema.safeParse(payload);
     if (!parsed.success) {
       return { success: false, message: "Invalid cancel order payload.", data: null, errors: [{ field: "orderId", message: "Invalid order id." }] };
+    }
+
+    if (actor) {
+      const existing = await repository.getOrderById(parsed.data.orderId);
+      if (existing && !canViewOrder(actor, existing.order)) {
+        return { success: false, message: "Forbidden.", data: null, errors: [{ field: "orderId", message: "Access denied." }] };
+      }
     }
 
     const cancelled = await repository.cancelOrder(parsed.data.orderId);
@@ -84,7 +102,7 @@ export class OrdersService {
     };
   }
 
-  async getOrder(payload: unknown) {
+  async getOrder(payload: unknown, actor?: AuthenticatedActor) {
     const parsed = getOrderSchema.safeParse(payload);
     if (!parsed.success) {
       return { success: false, message: "Invalid get order payload.", data: null, errors: [{ field: "orderId", message: "Invalid order id." }] };
@@ -95,16 +113,32 @@ export class OrdersService {
       return { success: false, message: "Order not found.", data: null, errors: [{ field: "orderId", message: "Order not found." }] };
     }
 
+    if (actor && !canViewOrder(actor, data.order)) {
+      return { success: false, message: "Forbidden.", data: null, errors: [{ field: "orderId", message: "Access denied." }] };
+    }
+
     return { success: true, message: "Order fetched successfully.", data };
   }
 
-  async listOrders(payload: unknown) {
+  async listOrders(payload: unknown, actor?: AuthenticatedActor) {
     const parsed = listOrdersSchema.safeParse(payload ?? {});
     if (!parsed.success) {
       return { success: false, message: "Invalid list orders payload.", data: null, errors: [{ field: "payload", message: "Invalid filters." }] };
     }
 
-    const { rows, total } = await repository.listOrders(parsed.data);
+    const scope = actor ? resolveOrderListScope(actor) : {};
+    if (actor) {
+      const filterCheck = assertCashierFilterAllowed(actor, undefined);
+      if (!filterCheck.allowed) {
+        return { success: false, message: "Forbidden.", data: null, errors: [{ field: "auth", message: filterCheck.message }] };
+      }
+    }
+
+    const { rows, total } = await repository.listOrders({
+      ...parsed.data,
+      cashierUserId: scope.cashierUserId,
+    });
+
     return {
       success: true,
       message: "Orders fetched successfully.",
@@ -118,10 +152,17 @@ export class OrdersService {
     };
   }
 
-  async updateOrderStatus(payload: unknown) {
+  async updateOrderStatus(payload: unknown, actor?: AuthenticatedActor) {
     const parsed = updateOrderStatusSchema.safeParse(payload);
     if (!parsed.success) {
       return { success: false, message: "Invalid status update payload.", data: null, errors: [{ field: "payload", message: "Invalid payload." }] };
+    }
+
+    if (actor) {
+      const existing = await repository.getOrderById(parsed.data.orderId);
+      if (existing && !canViewOrder(actor, existing.order)) {
+        return { success: false, message: "Forbidden.", data: null, errors: [{ field: "orderId", message: "Access denied." }] };
+      }
     }
 
     const updated = await repository.updateOrderStatus(parsed.data.orderId, parsed.data.status);

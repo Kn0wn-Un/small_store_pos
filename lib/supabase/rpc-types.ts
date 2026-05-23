@@ -60,6 +60,7 @@ export type CreateOrderAtomicParams = {
   invoiceNumber: string;
   invoicePdfUrl?: string;
   actorUserId: string;
+  cashierUserId?: string | null;
 };
 
 export type CreateProductWithInventoryParams = {

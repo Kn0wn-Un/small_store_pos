@@ -7,9 +7,12 @@ import { ordersService } from "../services/orders.service";
 
 export async function createOrderAction(payload: unknown) {
   const auth = await authorizeActionRole([ROLES.ADMIN, ROLES.CASHIER]);
-  if (!auth.success) return auth;
+  if (!auth.success || !auth.data) return auth;
 
-  const result = await ordersService.createOrder(payload);
+  const result = await ordersService.createOrder(payload, {
+    actorUserId: auth.data.userId,
+    cashierUserId: auth.data.userId,
+  });
   if (result.success) {
     revalidatePath("/orders");
     revalidatePath("/admin/orders");
